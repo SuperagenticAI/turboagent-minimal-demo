@@ -38,3 +38,20 @@ async def search_knowledge_base(ctx: RunContext[DemoDeps], question: str) -> str
     result = await ctx.deps.retriever.search(question)
     ctx.deps.metrics.append(result)
     return "\n".join(result.snippets)
+
+
+async def run_grounded(question: str, deps: DemoDeps):
+    prompt = (
+        "Use the search_knowledge_base tool before answering this question.\n\n"
+        f"Question: {question}"
+    )
+    result = await agent.run(prompt, deps=deps)
+    if deps.metrics:
+        return result
+
+    retry_prompt = (
+        "You must call the search_knowledge_base tool before answering. "
+        "Do not answer from memory.\n\n"
+        f"Question: {question}"
+    )
+    return await agent.run(retry_prompt, deps=deps)

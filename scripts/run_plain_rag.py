@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.agent import DemoDeps, agent
+from app.agent import DemoDeps, run_grounded
 from app.config import QUESTION
 from app.retrievers import BaselineSurrealRetriever
 
@@ -35,8 +35,10 @@ async def main() -> None:
 
     deps = DemoDeps(retriever=retriever)
     started = time.perf_counter()
-    result = await agent.run(QUESTION, deps=deps)
+    result = await run_grounded(QUESTION, deps=deps)
     total_ms = (time.perf_counter() - started) * 1000
+    if not deps.metrics:
+        raise RuntimeError("The model did not call search_knowledge_base after two attempts.")
     retrieval = deps.metrics[-1]
 
     print(style("Question:", BOLD, CYAN), QUESTION)
