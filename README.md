@@ -49,9 +49,9 @@ The point of the demo is that TurboAgents changes the retrieval layer, not the r
 
 ## Why SurrealDB in this demo
 
-This demo uses **SurrealDB** because it gives a cleaner before-and-after story.
+This demo uses **[SurrealDB](https://surrealdb.com/)** because it gives a cleaner before-and-after story.
 
-LanceDB is also supported by TurboAgents, but LanceDB already has its own quantization and indexing story. For a minimal integration demo, SurrealDB makes the TurboAgents addition easier to isolate.
+[LanceDB](https://lancedb.com/) is also supported by TurboAgents, but LanceDB already has its own quantization and indexing story. For a minimal integration demo, SurrealDB makes the TurboAgents addition easier to isolate.
 
 ## What TurboAgents is doing here
 
