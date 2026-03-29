@@ -121,7 +121,7 @@ class TurboSurrealRetriever:
     async def search(self, question: str, *, k: int = 3) -> RetrievalResult:
         query = embed_text(question)
         started = time.perf_counter()
-        rows = await self.store.search(query, k=k, rerank_top=max(k, 5))
+        rows = await self.store.search(query, k=k, rerank_top=max(k * 4, 10))
         elapsed_ms = (time.perf_counter() - started) * 1000
         snippets = [
             f"{row['metadata']['title']} [{row['metadata']['token']}]: {row['metadata']['content']}"

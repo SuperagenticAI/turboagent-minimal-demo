@@ -1,6 +1,8 @@
 # TurboAgents Minimal Demo
 
-A small standalone demo that starts with a plain **Pydantic AI + SurrealDB** RAG app and then adds **TurboAgents** on top of the same retrieval flow.
+A small standalone demo that starts with a plain **Pydantic AI + SurrealDB** RAG app and then adds [TurboAgents](https://github.com/SuperagenticAI/turboagents) on top of the same retrieval flow.
+
+[TurboAgents](https://github.com/SuperagenticAI/turboagents) is a Python package for TurboQuant-style compression, retrieval, and reranking in agent and RAG systems. The main docs are at [superagenticai.github.io/turboagents](https://superagenticai.github.io/turboagents/).
 
 The point of this repo is simple:
 
@@ -28,6 +30,17 @@ This repo gives you three ways to run the demo:
 | --- | --- | --- |
 | Plain SurrealDB RAG | Pydantic AI agent, question, documents, local model | Uses plain SurrealDB vector search |
 | TurboAgents SurrealDB RAG | Pydantic AI agent, question, documents, local model | Uses TurboAgents for compressed retrieval and reranking on top of SurrealDB |
+
+## What Changed In The Code
+
+This repo is intentionally small, so the integration seam stays easy to see.
+
+- [`scripts/run_plain_rag.py`](./scripts/run_plain_rag.py) runs the baseline agent with the plain SurrealDB retriever.
+- [`scripts/run_turbo_rag.py`](./scripts/run_turbo_rag.py) runs the same agent with the TurboAgents-backed retriever.
+- [`app/retrievers.py`](./app/retrievers.py) is where the real swap happens: `BaselineSurrealRetriever` becomes `TurboSurrealRetriever`.
+- [`app/agent.py`](./app/agent.py) keeps the same high-level Pydantic AI agent wiring in both versions.
+
+The point of the demo is that TurboAgents changes the retrieval layer, not the rest of the app.
 
 ## Why SurrealDB in this demo
 
@@ -70,13 +83,12 @@ You need these tools installed before running the demo:
 - **Python 3.11+**
 - **uv**
 - **Ollama**
-- **Docker**
 
 ### What each tool is for
 
 - **uv** installs and runs the Python environment for this repo
 - **Ollama** runs the local language model used by the agent
-- **Docker** is useful for local database and AI workflows in general, even though this demo uses the embedded `surrealkv://` backend and does not require a separate SurrealDB server process
+- **Sentence Transformers** provides the real local embedding model used for retrieval
 
 ## Prerequisites
 
@@ -87,10 +99,12 @@ Make sure these local services are available:
 
 This demo uses the local embedded `surrealkv://` backend from the SurrealDB Python SDK, so you do **not** need to run a separate SurrealDB server for it.
 
+It also uses the local embedding model `Qwen/Qwen3-Embedding-0.6B`, truncated to `256` dimensions so it stays compatible with TurboAgents. The model will be downloaded on first use.
+
 ## Quick start
 
 ```bash
-git clone <your-demo-repo-url>
+git clone https://github.com/SuperagenticAI/turboagent-minimal-demo.git
 cd turboagent-minimal-demo
 uv sync
 ```
@@ -107,6 +121,18 @@ If you do not have Ollama yet, install it first and then make sure the model is 
 ollama pull qwen3.5:9b
 ollama list
 ```
+
+## What happens on first run
+
+When you run the demo for the first time, a few things are created locally:
+
+- the embedding model is downloaded and cached by `sentence-transformers`
+- the demo builds embeddings for the small sample corpus
+- the embedded `surrealkv://` database file is created under `demo_data/`
+
+Nothing is precomputed in the repo. The demo builds its own local retrieval state so the flow stays easy to inspect and reproduce.
+
+Because of that, the first run may be slower than later runs.
 
 ## Run
 
@@ -134,7 +160,7 @@ uv run python scripts/run_compare.py
   Shared configuration, demo question, and sample documents.
 
 - `app/embed.py`
-  A tiny local embedding function used to keep the demo self-contained.
+  The real local embedding model wrapper used by both retrievers.
 
 - `app/retrievers.py`
   Contains both retrievers:
@@ -200,11 +226,23 @@ ollama pull qwen3.5:9b
 
 That is normal.
 
-The first model call may take longer because the local model needs to warm up.
+The first model call may take longer because:
 
-### Why does this use fake embeddings?
+- the local Ollama model may need to warm up
+- the embedding model may need to download and load
+- the demo is building its local retrieval state for the first time
 
-This repo is a **minimal integration demo**. The point is to make the TurboAgents change easy to understand, not to build a production embedding pipeline.
+## Resetting the demo
+
+If you want to rebuild everything from scratch, delete the local demo data and run the scripts again:
+
+```bash
+rm -rf demo_data
+uv run python scripts/run_compare.py
+```
+
+This will rebuild the local SurrealKV database and fresh embeddings for the demo corpus.
+
 
 ## Summary
 

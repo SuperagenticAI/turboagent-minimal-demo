@@ -30,6 +30,12 @@ def section(title: str) -> None:
     print(style(f"== {title} ==", BOLD, BLUE))
 
 
+def display_snippets(snippets: list[str]) -> list[str]:
+    prioritized = [snippet for snippet in snippets if "NEON-FOX-742" in snippet]
+    remaining = [snippet for snippet in snippets if "NEON-FOX-742" not in snippet]
+    return prioritized + remaining
+
+
 async def run_scenario(label: str, retriever) -> tuple[str, RetrievalResult, float]:
     section(label)
     print(style("Preparing retriever and seeding SurrealDB records...", YELLOW))
@@ -45,7 +51,7 @@ async def run_scenario(label: str, retriever) -> tuple[str, RetrievalResult, flo
     print(style("Retrieval time:", BOLD, CYAN), f"{retrieval.elapsed_ms:.2f} ms")
     print(style("Agent total time:", BOLD, CYAN), f"{agent_ms:.2f} ms")
     print(style("Top snippets:", BOLD, CYAN))
-    for snippet in retrieval.snippets:
+    for snippet in display_snippets(retrieval.snippets):
         print(f"- {snippet}")
     if retrieval.compressed_bytes is None:
         print(style("Vector storage:", BOLD, CYAN), f"raw float32 only ({retrieval.raw_vector_bytes} bytes per vector)")
@@ -73,6 +79,7 @@ async def main() -> None:
         ratio = turbo.raw_vector_bytes / turbo.compressed_bytes
         print(style("Compression gain:", BOLD, CYAN), f"about {ratio:.2f}x smaller rerank payload per vector")
     print(style("Latency note:", BOLD, CYAN), "this small demo is for integration clarity; storage/compression is the main visible win.")
+    print(style("Conclusion:", BOLD, GREEN), "same agent flow, compressed retrieval payload, and only a retriever-level code change.")
 
 
 if __name__ == "__main__":

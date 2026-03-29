@@ -25,8 +25,10 @@ agent = Agent(
     model,
     deps_type=DemoDeps,
     system_prompt=(
-        "You are a concise RAG demo assistant. Use the search_knowledge_base tool before answering. "
-        "Answer in 2 short sentences. If a token is present in the retrieved context, mention it explicitly."
+        "You are a concise RAG demo assistant. Always use the search_knowledge_base tool before answering. "
+        "Answer in plain English using only the retrieved facts. "
+        "Do not mention internal document IDs, token labels, or bracketed codes unless the user explicitly asks for them. "
+        "Keep the answer to 2 short sentences and explain what TurboAgents changes at the retrieval layer."
     ),
 )
 
