@@ -1,6 +1,6 @@
 # TurboAgents Minimal Demo
 
-A small standalone demo that starts with a plain **Pydantic AI + SurrealDB** RAG app and then adds [TurboAgents](https://github.com/SuperagenticAI/turboagents) on top of the same retrieval flow.
+A small standalone demo that starts with a plain [Pydantic AI](https://ai.pydantic.dev/) + [SurrealDB](https://surrealdb.com/) RAG app and then adds [TurboAgents](https://github.com/SuperagenticAI/turboagents) on top of the same retrieval flow.
 
 [TurboAgents](https://github.com/SuperagenticAI/turboagents) is a Python package for TurboQuant-style compression, retrieval, and reranking in agent and RAG systems. The main docs are at [superagenticai.github.io/turboagents](https://superagenticai.github.io/turboagents/).
 
@@ -26,10 +26,15 @@ This repo gives you three ways to run the demo:
 
 ## Before vs After
 
-| Version | What stays the same | What changes |
-| --- | --- | --- |
-| Plain SurrealDB RAG | Pydantic AI agent, question, documents, local model | Uses plain SurrealDB vector search |
-| TurboAgents SurrealDB RAG | Pydantic AI agent, question, documents, local model | Uses TurboAgents for compressed retrieval and reranking on top of SurrealDB |
+**Plain SurrealDB RAG**
+
+- Stays the same: Pydantic AI agent, question, documents, local model
+- Changes: uses plain SurrealDB vector search
+
+**TurboAgents SurrealDB RAG**
+
+- Stays the same: Pydantic AI agent, question, documents, local model
+- Changes: uses TurboAgents for compressed retrieval and reranking on top of SurrealDB
 
 ## What Changed In The Code
 
@@ -102,6 +107,8 @@ This demo uses the local embedded `surrealkv://` backend from the SurrealDB Pyth
 It also uses the local embedding model `Qwen/Qwen3-Embedding-0.6B`, truncated to `256` dimensions so it stays compatible with TurboAgents. The model will be downloaded on first use.
 
 ## Quick start
+
+Do this first before running any of the demo scripts:
 
 ```bash
 git clone https://github.com/SuperagenticAI/turboagent-minimal-demo.git
