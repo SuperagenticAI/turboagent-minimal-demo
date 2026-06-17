@@ -9,7 +9,7 @@ dependencies = [
   "pydantic-ai-slim[openai]>=0.8.0",
   "sentence-transformers>=5.0.0",
   "surrealdb>=1.0.0",
-  "turboagents[rag]>=0.1.0a2",
+  "turboagents[rag]>=0.1.0a3",
 ]
 
 [tool.uv]
